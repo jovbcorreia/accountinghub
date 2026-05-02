@@ -1,0 +1,27 @@
+export function LogoIcon({ size = 40 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="190 60 300 300" xmlns="http://www.w3.org/2000/svg">
+      <rect x="190" y="60" width="300" height="300" rx="50" fill="#f1ede8" />
+      <rect x="240" y="100" width="200" height="200" rx="36" fill="#2d2b29" />
+      <rect x="404" y="100" width="36" height="36" rx="12" fill="#f97316" />
+      <circle cx="422" cy="118" r="7" fill="#ffffff" />
+      <rect x="270" y="178" width="36" height="96" rx="8" fill="#ffffff" />
+      <rect x="322" y="204" width="36" height="70" rx="8" fill="#f97316" />
+      <rect x="374" y="226" width="36" height="48" rx="8" fill="#fdba74" />
+      <rect x="262" y="278" width="156" height="2" rx="1" fill="#ffffff" opacity="0.12" />
+      <polyline points="288,178 340,204 392,226" fill="none" stroke="#f97316" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="288" cy="178" r="5" fill="#ffffff" />
+      <circle cx="340" cy="204" r="5" fill="#f97316" />
+      <circle cx="392" cy="226" r="5" fill="#fdba74" />
+    </svg>
+  );
+}
+
+export function LogoFull({ iconSize = 36 }: { iconSize?: number }) {
+  return (
+    <div className="flex items-center gap-2.5">
+      <LogoIcon size={iconSize} />
+      <span className="font-bold text-lg tracking-tight">AccountingHub</span>
+    </div>
+  );
+}

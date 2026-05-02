@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Brand palette — warm charcoal + orange + cream */
+    --background:            33 24% 93%;   /* #f1ede8 cream */
+    --foreground:            30 5% 17%;    /* #2d2b29 charcoal */
+
+    --card:                  0 0% 100%;    /* #ffffff white */
+    --card-foreground:       30 5% 17%;
+
+    --popover:               0 0% 100%;
+    --popover-foreground:    30 5% 17%;
+
+    --primary:               24 95% 53%;   /* #f97316 orange */
+    --primary-foreground:    0 0% 100%;
+
+    --secondary:             34 12% 88%;   /* #e5e2de light grey */
+    --secondary-foreground:  30 5% 17%;
+
+    --muted:                 34 12% 88%;   /* #e5e2de */
+    --muted-foreground:      30 5% 45%;
+
+    --accent:                31 97% 72%;   /* #fdba74 peach */
+    --accent-foreground:     30 5% 17%;
+
+    --destructive:           0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border:                34 12% 88%;   /* #e5e2de */
+    --input:                 0 0% 100%;    /* white input bg */
+    --ring:                  24 95% 53%;   /* orange focus ring */
+
+    --radius:                0.75rem;      /* 12px */
+
+    /* Sidebar — charcoal */
+    --sidebar-background:           30 5% 17%;    /* #2d2b29 */
+    --sidebar-foreground:           0 0% 100%;
+    --sidebar-primary:              24 95% 53%;   /* orange active */
+    --sidebar-primary-foreground:   0 0% 100%;
+    --sidebar-accent:               24 95% 53%;   /* orange hover/active */
+    --sidebar-accent-foreground:    0 0% 100%;
+    --sidebar-border:               30 5% 24%;    /* slightly lighter charcoal */
+    --sidebar-ring:                 24 95% 53%;
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+  body { @apply bg-background text-foreground font-sans antialiased; }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #f1ede8; }
+::-webkit-scrollbar-thumb { background: #e5e2de; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #fdba74; }
+
+/* Orange focus ring on inputs */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.20);
+  border-color: #f97316;
+}

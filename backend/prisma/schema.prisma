@@ -1,0 +1,313 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Company {
+  id             String           @id @default(cuid())
+  name           String
+  taxId          String           @unique
+  address        String?
+  city           String?
+  zipCode        String?
+  country        String           @default("PT")
+  email          String?
+  phone          String?
+  logo           String?
+  iban           String?
+  currency       String           @default("EUR")
+  fiscalYear     Int              @default(2024)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  users          User[]
+  customers      Customer[]
+  suppliers      Supplier[]
+  products       Product[]
+  invoices       Invoice[]
+  expenses       Expense[]
+  accounts       Account[]
+  journalEntries JournalEntry[]
+  taxRates       TaxRate[]
+  docSeries      DocumentSeries[]
+  bankAccounts   BankAccount[]
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(VIEWER)
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  ADMIN
+  ACCOUNTANT
+  VIEWER
+}
+
+model Customer {
+  id        String    @id @default(cuid())
+  companyId String
+  company   Company   @relation(fields: [companyId], references: [id])
+  name      String
+  taxId     String?
+  email     String?
+  phone     String?
+  address   String?
+  city      String?
+  zipCode   String?
+  country   String    @default("PT")
+  notes     String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  invoices  Invoice[]
+}
+
+model Supplier {
+  id        String    @id @default(cuid())
+  companyId String
+  company   Company   @relation(fields: [companyId], references: [id])
+  name      String
+  taxId     String?
+  email     String?
+  phone     String?
+  address   String?
+  city      String?
+  zipCode   String?
+  country   String    @default("PT")
+  notes     String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  expenses  Expense[]
+}
+
+model Product {
+  id           String        @id @default(cuid())
+  companyId    String
+  company      Company       @relation(fields: [companyId], references: [id])
+  code         String
+  name         String
+  description  String?
+  price        Decimal       @db.Decimal(10, 2)
+  unit         String        @default("un")
+  taxRateId    String
+  taxRate      TaxRate       @relation(fields: [taxRateId], references: [id])
+  category     String?
+  stock        Int?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  deletedAt    DateTime?
+  invoiceLines InvoiceLine[]
+}
+
+model TaxRate {
+  id        String    @id @default(cuid())
+  companyId String
+  company   Company   @relation(fields: [companyId], references: [id])
+  name      String
+  rate      Decimal   @db.Decimal(5, 2)
+  products  Product[]
+}
+
+model DocumentSeries {
+  id         String       @id @default(cuid())
+  companyId  String
+  company    Company      @relation(fields: [companyId], references: [id])
+  type       DocumentType
+  prefix     String
+  nextNumber Int          @default(1)
+  year       Int
+}
+
+enum DocumentType {
+  INVOICE
+  RECEIPT
+  CREDIT_NOTE
+  DEBIT_NOTE
+  QUOTE
+  PROFORMA
+}
+
+model Invoice {
+  id         String        @id @default(cuid())
+  companyId  String
+  company    Company       @relation(fields: [companyId], references: [id])
+  customerId String
+  customer   Customer      @relation(fields: [customerId], references: [id])
+  number     String        @unique
+  type       DocumentType  @default(INVOICE)
+  status     InvoiceStatus @default(DRAFT)
+  issueDate  DateTime
+  dueDate    DateTime
+  lines      InvoiceLine[]
+  subtotal   Decimal       @db.Decimal(10, 2)
+  taxAmount  Decimal       @db.Decimal(10, 2)
+  total      Decimal       @db.Decimal(10, 2)
+  paidAmount Decimal       @db.Decimal(10, 2) @default(0)
+  notes      String?
+  payments   Payment[]
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+}
+
+enum InvoiceStatus {
+  DRAFT
+  ISSUED
+  PAID
+  PARTIALLY_PAID
+  OVERDUE
+  CANCELLED
+}
+
+model InvoiceLine {
+  id          String   @id @default(cuid())
+  invoiceId   String
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id])
+  productId   String?
+  product     Product? @relation(fields: [productId], references: [id])
+  description String
+  quantity    Decimal  @db.Decimal(10, 2)
+  unitPrice   Decimal  @db.Decimal(10, 2)
+  discount    Decimal  @db.Decimal(5, 2)  @default(0)
+  taxRate     Decimal  @db.Decimal(5, 2)
+  subtotal    Decimal  @db.Decimal(10, 2)
+  taxAmount   Decimal  @db.Decimal(10, 2)
+  total       Decimal  @db.Decimal(10, 2)
+}
+
+model Payment {
+  id        String        @id @default(cuid())
+  companyId String
+  invoiceId String
+  invoice   Invoice       @relation(fields: [invoiceId], references: [id])
+  amount    Decimal       @db.Decimal(10, 2)
+  method    PaymentMethod
+  date      DateTime
+  reference String?
+  notes     String?
+  createdAt DateTime      @default(now())
+}
+
+enum PaymentMethod {
+  BANK_TRANSFER
+  CARD
+  CASH
+  MBWAY
+  CHECK
+}
+
+model Expense {
+  id         String        @id @default(cuid())
+  companyId  String
+  company    Company       @relation(fields: [companyId], references: [id])
+  supplierId String?
+  supplier   Supplier?     @relation(fields: [supplierId], references: [id])
+  number     String?
+  date       DateTime
+  dueDate    DateTime?
+  status     ExpenseStatus @default(PENDING)
+  lines      ExpenseLine[]
+  subtotal   Decimal       @db.Decimal(10, 2)
+  taxAmount  Decimal       @db.Decimal(10, 2)
+  total      Decimal       @db.Decimal(10, 2)
+  attachment String?
+  notes      String?
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+}
+
+enum ExpenseStatus {
+  PENDING
+  PAID
+  CANCELLED
+}
+
+model ExpenseLine {
+  id          String  @id @default(cuid())
+  expenseId   String
+  expense     Expense @relation(fields: [expenseId], references: [id])
+  description String
+  quantity    Decimal @db.Decimal(10, 2)
+  unitPrice   Decimal @db.Decimal(10, 2)
+  taxRate     Decimal @db.Decimal(5, 2)
+  accountId   String?
+  total       Decimal @db.Decimal(10, 2)
+}
+
+model Account {
+  id           String        @id @default(cuid())
+  companyId    String
+  company      Company       @relation(fields: [companyId], references: [id])
+  code         String
+  name         String
+  type         AccountType
+  parentId     String?
+  parent       Account?      @relation("AccountHierarchy", fields: [parentId], references: [id])
+  children     Account[]     @relation("AccountHierarchy")
+  journalLines JournalLine[]
+}
+
+enum AccountType {
+  ASSET
+  LIABILITY
+  EQUITY
+  REVENUE
+  EXPENSE
+}
+
+model JournalEntry {
+  id          String        @id @default(cuid())
+  companyId   String
+  company     Company       @relation(fields: [companyId], references: [id])
+  date        DateTime
+  description String
+  reference   String?
+  lines       JournalLine[]
+  createdAt   DateTime      @default(now())
+  createdBy   String
+}
+
+model JournalLine {
+  id          String       @id @default(cuid())
+  entryId     String
+  entry       JournalEntry @relation(fields: [entryId], references: [id])
+  accountId   String
+  account     Account      @relation(fields: [accountId], references: [id])
+  debit       Decimal      @db.Decimal(10, 2) @default(0)
+  credit      Decimal      @db.Decimal(10, 2) @default(0)
+  description String?
+}
+
+model BankAccount {
+  id           String            @id @default(cuid())
+  companyId    String
+  company      Company           @relation(fields: [companyId], references: [id])
+  name         String
+  iban         String?
+  currency     String            @default("EUR")
+  balance      Decimal           @db.Decimal(10, 2) @default(0)
+  transactions BankTransaction[]
+}
+
+model BankTransaction {
+  id            String      @id @default(cuid())
+  bankAccountId String
+  bankAccount   BankAccount @relation(fields: [bankAccountId], references: [id])
+  date          DateTime
+  description   String
+  amount        Decimal     @db.Decimal(10, 2)
+  balance       Decimal     @db.Decimal(10, 2)
+  reconciled    Boolean     @default(false)
+  createdAt     DateTime    @default(now())
+}
