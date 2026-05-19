@@ -6,6 +6,43 @@ AccountingHub is an open-source web application inspired by leading accounting p
 
 ---
 
+## Demo
+
+https://github.com/jovbcorreia/accountinghub/raw/main/screenshots/demo.mov
+
+---
+
+## Screenshots
+
+<table>
+  <tr>
+    <td><strong>Login</strong><br/><img src="screenshots/login.png"/></td>
+    <td><strong>Dashboard</strong><br/><img src="screenshots/dashboard.png"/></td>
+  </tr>
+  <tr>
+    <td><strong>Invoices</strong><br/><img src="screenshots/invoices.png"/></td>
+    <td><strong>Payments</strong><br/><img src="screenshots/payments.png"/></td>
+  </tr>
+  <tr>
+    <td><strong>Customers</strong><br/><img src="screenshots/customers.png"/></td>
+    <td><strong>Suppliers</strong><br/><img src="screenshots/suppliers.png"/></td>
+  </tr>
+  <tr>
+    <td><strong>Products / Services</strong><br/><img src="screenshots/products.png"/></td>
+    <td><strong>Expenses</strong><br/><img src="screenshots/expenses.png"/></td>
+  </tr>
+  <tr>
+    <td><strong>Journal</strong><br/><img src="screenshots/journal.png"/></td>
+    <td><strong>Reports (P&amp;L)</strong><br/><img src="screenshots/reports.png"/></td>
+  </tr>
+  <tr>
+    <td><strong>Bank</strong><br/><img src="screenshots/bank.png"/></td>
+    <td><strong>Settings</strong><br/><img src="screenshots/settings.png"/></td>
+  </tr>
+</table>
+
+---
+
 ## Getting Started
 
 ### Prerequisites
